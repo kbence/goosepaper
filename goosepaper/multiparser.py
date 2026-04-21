@@ -89,6 +89,13 @@ class MultiParser:
             help="Only valid when specified on command line (ignored if present in any config file). Supersedes any config file setting for 'replace: true', thus ensuring that the file will NEVER be overwritten. Will also supersede command line '--replace' if both are specified regardless of order.",
         )
         self.parser.add_argument(
+            "--limit",
+            type=int,
+            required=False,
+            default=None,
+            help="Global ceiling on stories per provider. Tighter than any per-provider limit set via config; looser values are ignored in favor of the provider's own limit.",
+        )
+        self.parser.add_argument(
             "--cleanup",
             required=False,
             default=None,

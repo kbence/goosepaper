@@ -19,9 +19,10 @@ class RedditHeadlineStoryProvider(StoryProvider):
         subreddit = subreddit[2:] if subreddit.startswith("r/") else subreddit
         self.subreddit = subreddit
 
-    def get_stories(self, limit: int = 20, **kwargs) -> List[Story]:
+    def get_stories(self, limit: int = None, **kwargs) -> List[Story]:
         feed = feedparser.parse(f"https://www.reddit.com/r/{self.subreddit}.rss")
-        limit = min(self.limit, len(feed.entries), limit)
+        cap = self.limit if limit is None else min(limit, self.limit)
+        limit = min(cap, len(feed.entries))
         stories = []
         for entry in feed.entries:
             try:

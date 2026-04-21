@@ -8,7 +8,7 @@ class StoryProvider(abc.ABC):
     An abstract class for a class that provides stories to be rendered.
     """
 
-    def get_stories(self, limit: int = 5) -> List["Story"]:
+    def get_stories(self, limit: int = None) -> List["Story"]:
         """
         Get a list of stories from this Provider.
         """
@@ -27,10 +27,11 @@ class CustomTextStoryProvider(StoryProvider):
         self.limit = limit
         self.headline = headline or "Lorem Ipsum Dolor Sit Amet"
 
-    def get_stories(self, limit: int = 5, **kwargs) -> List[Story]:
+    def get_stories(self, limit: int = None, **kwargs) -> List[Story]:
+        effective = self.limit if limit is None else min(self.limit, limit)
         return [
             Story(headline=self.headline, body_text=self.text)
-            for _ in range(min(self.limit, limit))
+            for _ in range(effective)
         ]
 
 

@@ -26,8 +26,12 @@ def main():
         title = config["title"] if "title" in config else None
         subtitle = config["subtitle"] if "subtitle" in config else None
 
+        limit = multiparser.argumentOrConfig("limit")
         paper = Goosepaper(
-            story_providers=story_providers, title=title, subtitle=subtitle
+            story_providers=story_providers,
+            title=title,
+            subtitle=subtitle,
+            limit=limit,
         )
 
         if filename.endswith(".html"):

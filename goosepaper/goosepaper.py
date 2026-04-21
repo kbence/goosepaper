@@ -35,6 +35,7 @@ class Goosepaper:
         story_providers: List[StoryProvider],
         title: str = None,
         subtitle: str = None,
+        limit: Optional[int] = None,
     ):
         """
         Create a new Goosepaper.
@@ -46,24 +47,31 @@ class Goosepaper:
 
         """
         self.story_providers = story_providers
+        self.limit = limit
         self.title = title if title else "Daily Goosepaper"
         self.subtitle = subtitle + "\n" if subtitle else ""
         self.subtitle += datetime.datetime.today().strftime("%B %d, %Y %H:%M")
 
-    def get_stories(self, deduplicate: bool = False) -> List[Story]:
+    def get_stories(
+        self, deduplicate: bool = False, limit: Optional[int] = None
+    ) -> List[Story]:
         """
         Retrieve the complete list of stories to render in this Goosepaper.
 
         Arguments:
             deduplicate: Whether to remove duplicate stories. Default: False
+            limit: If set, a global ceiling passed to each provider's
+                get_stories. Providers still respect their own configured
+                per-provider limit; whichever is smaller wins.
 
         Returns:
             List[Story]
 
         """
+        effective_limit = limit if limit is not None else self.limit
         stories: List[Story] = []
         for prov in self.story_providers:
-            new_stories = prov.get_stories()
+            new_stories = prov.get_stories(limit=effective_limit)
             for a in new_stories:
                 if deduplicate:
                     for b in stories:
@@ -220,7 +228,7 @@ class Goosepaper:
 
         stories = []
         for prov in self.story_providers:
-            new_stories = prov.get_stories()
+            new_stories = prov.get_stories(limit=self.limit)
             for a in new_stories:
                 if not a.headline:
                     stories.append(a)

@@ -14,7 +14,7 @@ class MetaWeatherStoryProvider(StoryProvider):
     def CtoF(self, temp: float) -> float:
         return (temp * 9 / 5) + 32
 
-    def get_stories(self, limit: int = 1, **kwargs) -> List[Story]:
+    def get_stories(self, limit: int = None, **kwargs) -> List[Story]:
         weatherReq = requests.get(
             f"https://www.metaweather.com/api/location/{self.woe}/"
         ).json()
@@ -109,7 +109,7 @@ class OpenMeteoWeatherStoryProvider(StoryProvider):
             f"&temperature_unit={'fahrenheit' if self.F else 'celsius'}&timezone={self.timezone}"
         )
 
-    def get_stories(self, limit: int = 1, **kwargs) -> List[Story]:
+    def get_stories(self, limit: int = None, **kwargs) -> List[Story]:
         res = requests.get(self._build_url()).json()
         daily = res["daily"]
         todays_high = daily["temperature_2m_max"][0]
